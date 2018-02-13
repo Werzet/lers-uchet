@@ -215,7 +215,12 @@ namespace MeasurePointsExportPultLINQ
                 foreach (MeasurePoint points in measurePointsCollection)
                 {
                     // Проверяем, чтобы серийный номер оборудования был указан для каждой точки
-                    if (points.Device != null)
+                    // Универсальный пульт использует только системные модели, которые могут обмениваться данными и статус драйвера которых не в разработке,
+                    // поэтому экспортировать точки учёта с такими моделями нет смысла.
+                    if (points.Device != null &&
+                        points.Device.Model.IsSystem &&
+                        points.Device.Model.HasDriverInterface &&
+                        points.Device.Model.DataInterface.Driver.DriverStatus != DriverStatus.InDevelopment)
                     {
                         measurepointNumber = points.Number;
 
